@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject private var store: BeyondStore
     @State private var isShowingNotifications = false
 
     var body: some View {
@@ -14,7 +15,7 @@ struct HomeView: View {
                         .fill(Color(uiColor: .separator).opacity(0.35))
                         .frame(height: 0.5)
 
-                    ForEach(SocialPost.samples) { post in
+                    ForEach(store.posts) { post in
                         PostCard(post: post)
                     }
                 }

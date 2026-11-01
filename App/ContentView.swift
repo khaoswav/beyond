@@ -1,48 +1,41 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var store = BeyondStore()
+    @State private var selectedTab = 0
+    @State private var isShowingComposer = false
+
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             HomeView()
-                .tabItem {
-                    Label("Ana Sayfa", systemImage: "house")
-                }
+                .tabItem { Label("Ana Sayfa", systemImage: "house") }
+                .tag(0)
 
             ExploreView()
-                .tabItem {
-                    Label("Keşfet", systemImage: "magnifyingglass")
-                }
+                .tabItem { Label("Keşfet", systemImage: "magnifyingglass") }
+                .tag(1)
 
-            PlaceholderTab(title: "Paylaş", symbol: "plus.app")
-                .tabItem {
-                    Label("Paylaş", systemImage: "plus.app")
-                }
+            Color.clear
+                .tabItem { Label("Paylaş", systemImage: "plus.app") }
+                .tag(2)
 
-            PlaceholderTab(title: "Mesajlar", symbol: "paperplane")
-                .tabItem {
-                    Label("Mesajlar", systemImage: "paperplane")
-                }
+            MessagesView()
+                .tabItem { Label("Mesajlar", systemImage: "paperplane") }
+                .tag(3)
 
             ProfileView()
-                .tabItem {
-                    Label("Profil", systemImage: "person.crop.circle")
-                }
+                .tabItem { Label("Profil", systemImage: "person.crop.circle") }
+                .tag(4)
         }
-    }
-}
-
-private struct PlaceholderTab: View {
-    let title: String
-    let symbol: String
-
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView(
-                title,
-                systemImage: symbol,
-                description: Text("Bu alan BEYOND için hazırlanıyor.")
-            )
-            .navigationTitle(title)
+        .onChange(of: selectedTab) { _, newValue in
+            guard newValue == 2 else { return }
+            selectedTab = 0
+            isShowingComposer = true
+        }
+        .environmentObject(store)
+        .sheet(isPresented: $isShowingComposer) {
+            CreatePostView()
+                .environmentObject(store)
         }
     }
 }

@@ -3,6 +3,7 @@ import PhotosUI
 import UIKit
 
 struct ProfileView: View {
+    @EnvironmentObject private var store: BeyondStore
     @AppStorage("beyond.profile.displayName") private var displayName = "Khaos"
     @AppStorage("beyond.profile.username") private var username = "khaos"
     @AppStorage("beyond.profile.bio") private var bio = "Kendi hikâyeni paylaş."
@@ -110,7 +111,8 @@ struct ProfileView: View {
     }
 
     private var postSection: some View {
-        VStack(spacing: 18) {
+        let userPosts = store.posts(for: username)
+        return VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Image(systemName: "square.grid.3x3")
                     .font(.subheadline.weight(.semibold))
@@ -120,12 +122,18 @@ struct ProfileView: View {
             }
             .padding(.horizontal, 18)
 
-            ContentUnavailableView(
-                "Henüz gönderi yok",
-                systemImage: "camera",
-                description: Text("Paylaştığın fotoğraf ve videolar burada görünecek.")
-            )
-            .padding(.vertical, 28)
+            if userPosts.isEmpty {
+                ContentUnavailableView(
+                    "Henüz gönderi yok",
+                    systemImage: "camera",
+                    description: Text("İlk paylaşımını yap, hikâyen burada başlasın.")
+                )
+                .padding(.vertical, 24)
+            } else {
+                ForEach(userPosts) { post in
+                    PostCard(post: post)
+                }
+            }
         }
     }
 

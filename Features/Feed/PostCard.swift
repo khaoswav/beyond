@@ -1,42 +1,26 @@
 import SwiftUI
+import UIKit
 
 struct PostCard: View {
     let post: SocialPost
 
-    @State private var isLiked = false
-    @State private var isSaved = false
+    @EnvironmentObject private var store: BeyondStore
+    
     @State private var isShowingComments = false
+    @State private var commentDraft = ""
+
+    private var isLiked: Bool { store.likedPostIDs.contains(post.id) }
+    private var isSaved: Bool { store.savedPostIDs.contains(post.id) }
 
     private var formattedLikes: String {
-        let count = post.likeCount + (isLiked ? 1 : 0)
-        return count.formatted(.number.locale(Locale(identifier: "tr_TR")))
+        (post.likeCount + (isLiked ? 1 : 0)).formatted(.number.locale(Locale(identifier: "tr_TR")))
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
 
-            AsyncImage(url: post.imageURL) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                case .failure:
-                    imageFallback
-                case .empty:
-                    ZStack {
-                        Color(uiColor: .secondarySystemBackground)
-                        ProgressView()
-                    }
-                @unknown default:
-                    imageFallback
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 340)
-            .clipped()
-            .accessibilityLabel("\(post.authorName) tarafından paylaşılan fotoğraf")
+            postImage
 
             actionBar
 
@@ -56,7 +40,7 @@ struct PostCard: View {
                 Button {
                     isShowingComments = true
                 } label: {
-                    Text("Yorumların tümünü gör (\(post.commentCount))")
+                    Text("Yorumların tümünü gör (\(post.commentCount + store.comments(for: post).count))")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -73,11 +57,41 @@ struct PostCard: View {
         }
         .sheet(isPresented: $isShowingComments) {
             NavigationStack {
-                ContentUnavailableView(
-                    "Henüz yorum yok",
-                    systemImage: "bubble.left",
-                    description: Text("Bu gönderiye ilk yorumu sen yapabilirsin.")
-                )
+                VStack(spacing: 0) {
+                    if store.comments(for: post).isEmpty {
+                        ContentUnavailableView(
+                            "Henüz yorum yok",
+                            systemImage: "bubble.left",
+                            description: Text("Bu gönderiye ilk yorumu sen yapabilirsin.")
+                        )
+                    } else {
+                        List(Array(store.comments(for: post).enumerated()), id: \.offset) { _, comment in
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(.secondary)
+                                Text(comment)
+                                    .font(.subheadline)
+                                Spacer(minLength: 0)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .listStyle(.plain)
+                    }
+
+                    HStack(spacing: 10) {
+                        TextField("Yorum ekle...", text: $commentDraft, axis: .vertical)
+                            .textFieldStyle(.roundedBorder)
+                            .lineLimit(1...4)
+                        Button("Gönder") {
+                            store.addComment(commentDraft, to: post)
+                            commentDraft = ""
+                        }
+                        .fontWeight(.semibold)
+                        .disabled(commentDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    }
+                    .padding()
+                }
                 .navigationTitle("Yorumlar")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -88,6 +102,38 @@ struct PostCard: View {
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
+        }
+    }
+
+    @ViewBuilder
+    private var postImage: some View {
+        if let data = post.imageData, let image = UIImage(data: data) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity)
+                .frame(maxHeight: 420)
+                .clipped()
+                .accessibilityLabel("Gönderi fotoğrafı")
+        } else if let url = post.imageURL {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                case .failure:
+                    imageFallback
+                case .empty:
+                    ZStack {
+                        Color(uiColor: .secondarySystemBackground)
+                        ProgressView()
+                    }
+                @unknown default:
+                    imageFallback
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 340)
+            .clipped()
         }
     }
 
@@ -134,7 +180,7 @@ struct PostCard: View {
         HStack(spacing: 18) {
             Button {
                 withAnimation(.spring(response: 0.28, dampingFraction: 0.62)) {
-                    isLiked.toggle()
+                    store.toggleLike(for: post)
                 }
             } label: {
                 Image(systemName: isLiked ? "heart.fill" : "heart")
@@ -162,7 +208,7 @@ struct PostCard: View {
 
             Button {
                 withAnimation(.easeInOut(duration: 0.18)) {
-                    isSaved.toggle()
+                    store.toggleSaved(for: post)
                 }
             } label: {
                 Image(systemName: isSaved ? "bookmark.fill" : "bookmark")
