@@ -64,11 +64,11 @@ struct ProfileView: View {
                 avatar(size: 92)
 
                 HStack(spacing: 0) {
-                    statistic(value: "0", title: "Gönderi")
+                    statistic(value: store.posts(for: username).count.formatted(), title: "Gönderi")
                     Spacer(minLength: 8)
                     statistic(value: "0", title: "Takipçi")
                     Spacer(minLength: 8)
-                    statistic(value: "0", title: "Takip")
+                    statistic(value: store.followingHandles.count.formatted(), title: "Takip")
                 }
             }
 
