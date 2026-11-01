@@ -2,7 +2,7 @@ name: iOS Build
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feature/explore-search]
   push:
     branches: [main]
 
