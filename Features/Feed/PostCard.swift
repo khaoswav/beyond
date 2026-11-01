@@ -184,7 +184,9 @@ struct PostCard: View {
                 }
             } label: {
                 Image(isLiked ? "FAHeart" : "FAHeartRegular").renderingMode(.template)
-                    .font(.system(size: 23, weight: .regular))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 23, height: 23)
                     .foregroundStyle(isLiked ? .red : .primary)
                     .symbolEffect(.bounce, value: isLiked)
             }
@@ -194,13 +196,17 @@ struct PostCard: View {
                 isShowingComments = true
             } label: {
                 Image("FACommentRegular").renderingMode(.template)
-                    .font(.system(size: 22))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 22, height: 22)
             }
             .accessibilityLabel("Yorum yap")
 
             ShareLink(item: post.caption) {
                 Image("FAPaperPlane").renderingMode(.template)
-                    .font(.system(size: 22))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 22, height: 22)
             }
             .accessibilityLabel("Paylaş")
 
@@ -212,7 +218,9 @@ struct PostCard: View {
                 }
             } label: {
                 Image(isSaved ? "FABookmark" : "FABookmarkRegular").renderingMode(.template)
-                    .font(.system(size: 22))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 22, height: 22)
                     .symbolEffect(.bounce, value: isSaved)
             }
             .accessibilityLabel(isSaved ? "Kaydedilenlerden çıkar" : "Gönderiyi kaydet")
