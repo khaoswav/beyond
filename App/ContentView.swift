@@ -8,7 +8,7 @@ struct ContentView: View {
                     Label("Ana Sayfa", systemImage: "house")
                 }
 
-            PlaceholderTab(title: "Keşfet", symbol: "magnifyingglass")
+            ExploreView()
                 .tabItem {
                     Label("Keşfet", systemImage: "magnifyingglass")
                 }
