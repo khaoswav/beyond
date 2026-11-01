@@ -48,9 +48,10 @@ struct ProfileView: View {
             }
             .onChange(of: selectedPhoto) { _, item in
                 Task {
-                    guard let data = try? await item?.loadTransferable(type: Data.self) else { return }
-                    profileImageData = data
-                    profileImageBase64 = data.base64EncodedString()
+                    guard let data = try? await item?.loadTransferable(type: Data.self),
+                          let optimizedData = optimizedImageData(from: data) else { return }
+                    profileImageData = optimizedData
+                    profileImageBase64 = optimizedData.base64EncodedString()
                 }
             }
         }
@@ -126,6 +127,19 @@ struct ProfileView: View {
             )
             .padding(.vertical, 28)
         }
+    }
+
+    private func optimizedImageData(from data: Data) -> Data? {
+        guard let image = UIImage(data: data) else { return nil }
+        let canvas = CGSize(width: 512, height: 512)
+        let scale = max(canvas.width / image.size.width, canvas.height / image.size.height)
+        let scaledSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let origin = CGPoint(x: (canvas.width - scaledSize.width) / 2, y: (canvas.height - scaledSize.height) / 2)
+        let renderer = UIGraphicsImageRenderer(size: canvas)
+        let thumbnail = renderer.image { _ in
+            image.draw(in: CGRect(origin: origin, size: scaledSize))
+        }
+        return thumbnail.jpegData(compressionQuality: 0.78)
     }
 
     private func statistic(value: String, title: String) -> some View {
