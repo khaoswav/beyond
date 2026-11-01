@@ -1,48 +1,31 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var store = BeyondStore()
+    @State private var isShowingComposer = false
+
     var body: some View {
         TabView {
             HomeView()
-                .tabItem {
-                    Label("Ana Sayfa", systemImage: "house")
-                }
+                .tabItem { Label("Ana Sayfa", systemImage: "house") }
 
             ExploreView()
-                .tabItem {
-                    Label("Keşfet", systemImage: "magnifyingglass")
-                }
+                .tabItem { Label("Keşfet", systemImage: "magnifyingglass") }
 
-            PlaceholderTab(title: "Paylaş", symbol: "plus.app")
-                .tabItem {
-                    Label("Paylaş", systemImage: "plus.app")
-                }
+            Color.clear
+                .tabItem { Label("Paylaş", systemImage: "plus.app") }
+                .onAppear { isShowingComposer = true }
 
-            PlaceholderTab(title: "Mesajlar", symbol: "paperplane")
-                .tabItem {
-                    Label("Mesajlar", systemImage: "paperplane")
-                }
+            MessagesView()
+                .tabItem { Label("Mesajlar", systemImage: "paperplane") }
 
             ProfileView()
-                .tabItem {
-                    Label("Profil", systemImage: "person.crop.circle")
-                }
+                .tabItem { Label("Profil", systemImage: "person.crop.circle") }
         }
-    }
-}
-
-private struct PlaceholderTab: View {
-    let title: String
-    let symbol: String
-
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView(
-                title,
-                systemImage: symbol,
-                description: Text("Bu alan BEYOND için hazırlanıyor.")
-            )
-            .navigationTitle(title)
+        .environmentObject(store)
+        .sheet(isPresented: $isShowingComposer) {
+            CreatePostView()
+                .environmentObject(store)
         }
     }
 }
