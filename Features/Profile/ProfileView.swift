@@ -11,6 +11,8 @@ struct ProfileView: View {
     @AppStorage("beyond.profile.avatarData") private var profileImageBase64 = ""
     @State private var profileImageData: Data?
     @State private var isEditingProfile = false
+    @State private var isShowingSettings = false
+    @State private var isShowingSavedPosts = false
 
     var body: some View {
         NavigationStack {
@@ -30,6 +32,8 @@ struct ProfileView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("Profili düzenle", systemImage: "pencil") { isEditingProfile = true }
+                        Button("Kaydedilenler", systemImage: "bookmark") { isShowingSavedPosts = true }
+                        Button("Ayarlar", systemImage: "gearshape") { isShowingSettings = true }
                         ShareLink(item: "BEYOND'da @\(username) profilini keşfet.") {
                             Label("Profili paylaş", systemImage: "square.and.arrow.up")
                         }
@@ -43,6 +47,13 @@ struct ProfileView: View {
             }
             .sheet(isPresented: $isEditingProfile) {
                 editProfileSheet
+            }
+            .sheet(isPresented: $isShowingSettings) {
+                SettingsView()
+            }
+            .sheet(isPresented: $isShowingSavedPosts) {
+                SavedPostsView()
+                    .environmentObject(store)
             }
             .onAppear {
                 profileImageData = Data(base64Encoded: profileImageBase64)

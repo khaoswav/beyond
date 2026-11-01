@@ -6,7 +6,6 @@ struct BEYONDApp: App {
         WindowGroup {
             ContentView()
                 .tint(BEYONDTheme.Colors.accent)
-                .preferredColorScheme(nil)
         }
     }
 }

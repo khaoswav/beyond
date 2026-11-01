@@ -4,6 +4,15 @@ struct ContentView: View {
     @StateObject private var store = BeyondStore()
     @State private var selectedTab = 0
     @State private var isShowingComposer = false
+    @AppStorage("beyond.settings.appearance") private var appearance = "system"
+
+    private var preferredScheme: ColorScheme? {
+        switch appearance {
+        case "light": .light
+        case "dark": .dark
+        default: nil
+        }
+    }
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -32,6 +41,7 @@ struct ContentView: View {
             selectedTab = 0
             isShowingComposer = true
         }
+        .preferredColorScheme(preferredScheme)
         .environmentObject(store)
         .sheet(isPresented: $isShowingComposer) {
             CreatePostView()
