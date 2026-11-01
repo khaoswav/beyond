@@ -40,7 +40,7 @@ struct PostCard: View {
                 Button {
                     isShowingComments = true
                 } label: {
-                    Text("Yorumların tümünü gör (\(post.commentCount))")
+                    Text("Yorumların tümünü gör (\(post.commentCount + store.comments(for: post).count))")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
