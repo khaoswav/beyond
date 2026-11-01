@@ -9,7 +9,7 @@ BEYOND is a native iPhone social app prototype built with Swift and SwiftUI.
 - Default language: Turkish
 - Platform: iPhone
 - Minimum deployment target: iOS 17
-- UI: Native Apple SwiftUI components, system controls, and SF Symbols
+- UI: Native Apple SwiftUI components and system controls, with selected Font Awesome Free SVG icons in the app asset catalog
 - Appearance: System, Light, and Dark
 
 ## Included experience
@@ -37,6 +37,7 @@ These boundaries are intentional and documented so local demo behavior is not mi
 ## Engineering principles
 
 - Prefer native Apple frameworks and system components.
+- Use a small, attributed set of Font Awesome Free icons for key navigation and social actions; keep Pro/Pro+ assets out of the public repository.
 - Avoid third-party UI frameworks and copied interface kits.
 - Respect Safe Areas, Dynamic Type, accessibility, and system appearance.
 - Keep features modular and reviewable through focused pull requests.
