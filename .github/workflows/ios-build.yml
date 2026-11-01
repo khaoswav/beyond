@@ -14,6 +14,18 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
       - name: Build BEYOND Debug for iOS
-        run: xcodebuild -project BEYOND.xcodeproj -scheme BEYOND -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project BEYOND.xcodeproj -scheme BEYOND -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO -derivedDataPath "$RUNNER_TEMP/BEYOND-DerivedData" build
       - name: Build BEYOND Release for iOS
         run: xcodebuild -project BEYOND.xcodeproj -scheme BEYOND -sdk iphonesimulator -configuration Release CODE_SIGNING_ALLOWED=NO build
+      - name: Package iOS Simulator app
+        run: |
+          APP_PATH="$RUNNER_TEMP/BEYOND-DerivedData/Build/Products/Release-iphonesimulator/BEYOND.app"
+          test -d "$APP_PATH"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "$RUNNER_TEMP/BEYOND-iOS-Simulator.zip"
+      - name: Upload iOS Simulator build
+        uses: actions/upload-artifact@v4
+        with:
+          name: BEYOND-iOS-Simulator-${{ github.sha }}
+          path: ${{ runner.temp }}/BEYOND-iOS-Simulator.zip
+          if-no-files-found: error
+          retention-days: 14
