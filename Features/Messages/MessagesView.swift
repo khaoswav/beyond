@@ -84,6 +84,8 @@ private struct ConversationView: View {
     @State private var draft = ""
     @State private var sentMessages: [String] = []
 
+    private var storageKey: String { "beyond.messages." + conversation.id }
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -126,6 +128,15 @@ private struct ConversationView: View {
         }
         .navigationTitle(conversation.name)
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            guard let data = UserDefaults.standard.data(forKey: storageKey),
+                  let stored = try? JSONDecoder().decode([String].self, from: data) else { return }
+            sentMessages = stored
+        }
+        .onChange(of: sentMessages) { _, messages in
+            guard let data = try? JSONEncoder().encode(messages) else { return }
+            UserDefaults.standard.set(data, forKey: storageKey)
+        }
     }
 
     private func messageBubble(_ text: String, isOutgoing: Bool) -> some View {
