@@ -1,6 +1,6 @@
 import SwiftUI
 
-private struct Conversation: Identifiable {
+private struct Conversation: Identifiable, Hashable {
     let id: String
     let name: String
     let handle: String
