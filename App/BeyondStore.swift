@@ -3,6 +3,9 @@ import Combine
 
 @MainActor
 final class BeyondStore: ObservableObject {
+    @Published private(set) var stories: [SocialStory] {
+        didSet { persistStories() }
+    }
     @Published private(set) var posts: [SocialPost] {
         didSet { persistPosts() }
     }
@@ -31,6 +34,7 @@ final class BeyondStore: ObservableObject {
     }
 
     private enum Keys {
+        static let stories = "beyond.stories.v1"
         static let posts = "beyond.feed.posts.v1"
         static let likes = "beyond.feed.likes.v1"
         static let saved = "beyond.feed.saved.v1"
@@ -40,6 +44,12 @@ final class BeyondStore: ObservableObject {
     }
 
     init() {
+        if let data = UserDefaults.standard.data(forKey: Keys.stories),
+           let stored = try? JSONDecoder().decode([SocialStory].self, from: data) {
+            stories = stored
+        } else {
+            stories = SocialStory.samples
+        }
         if let data = UserDefaults.standard.data(forKey: Keys.posts),
            let stored = try? JSONDecoder().decode([SocialPost].self, from: data) {
             posts = stored
@@ -80,6 +90,28 @@ final class BeyondStore: ObservableObject {
 
     func clearActivities() {
         activities.removeAll()
+    }
+
+    func addStory(caption: String, imageData: Data?) {
+        let cleaned = caption.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleaned.isEmpty || imageData != nil else { return }
+        let name = UserDefaults.standard.string(forKey: "beyond.profile.displayName") ?? "Khaos"
+        let handle = UserDefaults.standard.string(forKey: "beyond.profile.username") ?? "khaos"
+        let story = SocialStory(
+            id: UUID().uuidString,
+            authorName: name,
+            handle: handle,
+            caption: cleaned,
+            symbol: "sparkles",
+            imageData: imageData,
+            timeAgo: "Şimdi"
+        )
+        stories.insert(story, at: 0)
+    }
+
+    private func persistStories() {
+        guard let data = try? JSONEncoder().encode(stories) else { return }
+        UserDefaults.standard.set(data, forKey: Keys.stories)
     }
 
     func addPost(caption: String, imageData: Data?) {
