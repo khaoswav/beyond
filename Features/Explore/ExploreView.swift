@@ -227,6 +227,7 @@ struct ExploreView: View {
 }
 
 private struct PersonSuggestionRow: View {
+    @EnvironmentObject private var store: BeyondStore
     let person: ExplorePerson
     let onSelect: () -> Void
 
@@ -250,6 +251,17 @@ private struct PersonSuggestionRow: View {
                     .lineLimit(1)
             }
             Spacer(minLength: 4)
+            Button {
+                store.toggleFollow(handle: person.handle, displayName: person.name)
+            } label: {
+                Text(store.isFollowing(person.handle) ? "Takiptesin" : "Takip et")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(store.isFollowing(person.handle) ? Color.primary : Color.white)
+                    .padding(.horizontal, 11)
+                    .padding(.vertical, 8)
+                    .background(store.isFollowing(person.handle) ? Color(uiColor: .secondarySystemBackground) : Color.accentColor, in: Capsule())
+            }
+            .buttonStyle(.plain)
             Button(action: onSelect) {
                 Image(systemName: "arrow.up.left")
                     .font(.footnote.weight(.semibold))
