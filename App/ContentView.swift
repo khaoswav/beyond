@@ -4,6 +4,8 @@ struct ContentView: View {
     @StateObject private var store = BeyondStore()
     @State private var selectedTab = 0
     @State private var isShowingComposer = false
+    @AppStorage("beyond.onboarding.completed") private var hasCompletedOnboarding = false
+    @State private var isShowingOnboarding = false
     @AppStorage("beyond.settings.appearance") private var appearance = "system"
 
     private var preferredScheme: ColorScheme? {
@@ -40,6 +42,12 @@ struct ContentView: View {
             guard newValue == 2 else { return }
             selectedTab = 0
             isShowingComposer = true
+        }
+        .onAppear {
+            if !hasCompletedOnboarding { isShowingOnboarding = true }
+        }
+        .fullScreenCover(isPresented: $isShowingOnboarding) {
+            OnboardingView()
         }
         .preferredColorScheme(preferredScheme)
         .environmentObject(store)
