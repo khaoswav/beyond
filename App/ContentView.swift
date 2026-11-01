@@ -23,7 +23,7 @@ struct ContentView: View {
                     Label("Mesajlar", systemImage: "paperplane")
                 }
 
-            PlaceholderTab(title: "Profil", symbol: "person.crop.circle")
+            ProfileView()
                 .tabItem {
                     Label("Profil", systemImage: "person.crop.circle")
                 }
