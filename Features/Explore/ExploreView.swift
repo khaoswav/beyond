@@ -16,6 +16,7 @@ private struct ExplorePerson: Identifiable {
 }
 
 struct ExploreView: View {
+    @EnvironmentObject private var store: BeyondStore
     @State private var searchText = ""
     @State private var selectedScope: SearchScope = .all
 
@@ -51,7 +52,7 @@ struct ExploreView: View {
     }
 
     private var matchingPosts: [SocialPost] {
-        guard !normalizedQuery.isEmpty else { return SocialPost.samples }
+        guard !normalizedQuery.isEmpty else { return store.posts }
         return SocialPost.samples.filter {
             matches($0.authorName) || matches($0.handle) || matches($0.caption) || matches($0.location ?? "")
         }
@@ -170,7 +171,7 @@ struct ExploreView: View {
     private var recommendedSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             sectionHeading("Senin için seçtiklerimiz", subtitle: "Topluluktan öne çıkan paylaşımlar")
-            ForEach(SocialPost.samples.prefix(2)) { post in
+            ForEach(store.posts.prefix(2)) { post in
                 PostCard(post: post)
             }
         }
