@@ -1,5 +1,20 @@
 import SwiftUI
 
+private struct ExplorePerson: Identifiable {
+    let id: String
+    let name: String
+    let handle: String
+    let detail: String
+    let symbol: String
+
+    static let samples: [ExplorePerson] = [
+        .init(id: "deniz", name: "Deniz Yılmaz", handle: "@denizyilmaz", detail: "Fotoğraf ve şehir hayatı", symbol: "sun.max.fill"),
+        .init(id: "ece", name: "Ece Demir", handle: "@ecedemir", detail: "Yolculuk, tasarım ve günlük hayat", symbol: "camera.fill"),
+        .init(id: "mert", name: "Mert Kaya", handle: "@mertkaya", detail: "Müzik ve keşif", symbol: "music.note"),
+        .init(id: "ada", name: "Ada Şahin", handle: "@adase", detail: "Doğa ve minimal yaşam", symbol: "leaf.fill")
+    ]
+}
+
 struct ExploreView: View {
     @State private var searchText = ""
     @State private var selectedScope: SearchScope = .all
@@ -8,30 +23,13 @@ struct ExploreView: View {
         case all = "Tümü"
         case people = "Kişiler"
         case posts = "Gönderiler"
-
         var id: String { rawValue }
-    }
-
-    private struct SuggestedPerson: Identifiable {
-        let id: String
-        let name: String
-        let handle: String
-        let detail: String
-        let symbol: String
-
-        static let samples: [SuggestedPerson] = [
-            .init(id: "deniz", name: "Deniz Yılmaz", handle: "@denizyilmaz", detail: "Fotoğraf ve şehir hayatı", symbol: "sun.max.fill"),
-            .init(id: "ece", name: "Ece Demir", handle: "@ecedemir", detail: "Yolculuk, tasarım ve günlük hayat", symbol: "camera.fill"),
-            .init(id: "mert", name: "Mert Kaya", handle: "@mertkaya", detail: "Müzik ve keşif", symbol: "music.note"),
-            .init(id: "ada", name: "Ada Şahin", handle: "@adase", detail: "Doğa ve minimal yaşam", symbol: "leaf.fill")
-        ]
     }
 
     private struct Topic: Identifiable {
         let title: String
         let subtitle: String
         let symbol: String
-
         var id: String { title }
 
         static let trending: [Topic] = [
@@ -59,9 +57,9 @@ struct ExploreView: View {
         }
     }
 
-    private var matchingPeople: [SuggestedPerson] {
-        guard !normalizedQuery.isEmpty else { return SuggestedPerson.samples }
-        return SuggestedPerson.samples.filter {
+    private var matchingPeople: [ExplorePerson] {
+        guard !normalizedQuery.isEmpty else { return ExplorePerson.samples }
+        return ExplorePerson.samples.filter {
             matches($0.name) || matches($0.handle) || matches($0.detail)
         }
     }
@@ -73,7 +71,6 @@ struct ExploreView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 24) {
                     searchField
-
                     if isSearching {
                         searchResults
                     } else {
@@ -96,14 +93,12 @@ struct ExploreView: View {
         HStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.secondary)
-
             TextField("Kişi, gönderi veya konu ara", text: $searchText)
                 .font(.body)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
                 .accessibilityLabel("Keşfet içinde ara")
-
             if !searchText.isEmpty {
                 Button {
                     searchText = ""
@@ -124,7 +119,6 @@ struct ExploreView: View {
     private var trendingSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             sectionHeading("Şu an keşfedilenler", subtitle: "İlham veren konulara göz at")
-
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 ForEach(Topic.trending) { topic in
                     Button {
@@ -136,7 +130,6 @@ struct ExploreView: View {
                                 .foregroundStyle(Color.accentColor)
                                 .frame(width: 42, height: 42)
                                 .background(Color.accentColor.opacity(0.11), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(topic.title)
                                     .font(.subheadline.weight(.semibold))
@@ -163,14 +156,12 @@ struct ExploreView: View {
     private var peopleSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             sectionHeading("Tanıyabileceğin kişiler", subtitle: "Yeni insanlarla bağlantı kur")
-
             VStack(spacing: 0) {
-                ForEach(Array(SuggestedPerson.samples.enumerated()), id: \.element.id) { index, person in
+                ForEach(Array(ExplorePerson.samples.enumerated()), id: \.element.id) { index, person in
                     PersonSuggestionRow(person: person) {
                         searchText = person.handle.replacingOccurrences(of: "@", with: "")
                     }
-
-                    if index < SuggestedPerson.samples.count - 1 {
+                    if index < ExplorePerson.samples.count - 1 {
                         Divider().padding(.leading, 62)
                     }
                 }
@@ -182,7 +173,6 @@ struct ExploreView: View {
     private var recommendedSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             sectionHeading("Senin için seçtiklerimiz", subtitle: "Topluluktan öne çıkan paylaşımlar")
-
             ForEach(SocialPost.samples.prefix(2)) { post in
                 PostCard(post: post)
             }
@@ -201,10 +191,7 @@ struct ExploreView: View {
 
             if selectedScope != .posts && !matchingPeople.isEmpty {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Kişiler")
-                        .font(.headline)
-                        .padding(.horizontal, 16)
-
+                    Text("Kişiler").font(.headline).padding(.horizontal, 16)
                     ForEach(matchingPeople) { person in
                         PersonSuggestionRow(person: person) {
                             searchText = person.handle.replacingOccurrences(of: "@", with: "")
@@ -216,19 +203,16 @@ struct ExploreView: View {
 
             if selectedScope != .people && !matchingPosts.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Gönderiler")
-                        .font(.headline)
-                        .padding(.horizontal, 16)
-
+                    Text("Gönderiler").font(.headline).padding(.horizontal, 16)
                     ForEach(matchingPosts) { post in
                         PostCard(post: post)
                     }
                 }
             }
 
-            if (selectedScope == .people && matchingPeople.isEmpty)
-                || (selectedScope == .posts && matchingPosts.isEmpty)
-                || (selectedScope == .all && matchingPeople.isEmpty && matchingPosts.isEmpty) {
+            let hasResults = (selectedScope != .posts && !matchingPeople.isEmpty)
+                || (selectedScope != .people && !matchingPosts.isEmpty)
+            if !hasResults {
                 ContentUnavailableView.search(text: searchText)
                     .padding(.top, 24)
             }
@@ -237,18 +221,15 @@ struct ExploreView: View {
 
     private func sectionHeading(_ title: String, subtitle: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.title3.weight(.bold))
-            Text(subtitle)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            Text(title).font(.title3.weight(.bold))
+            Text(subtitle).font(.subheadline).foregroundStyle(.secondary)
         }
         .padding(.horizontal, 16)
     }
 }
 
 private struct PersonSuggestionRow: View {
-    let person: ExploreView.PersonRowData
+    let person: ExplorePerson
     let onSelect: () -> Void
 
     var body: some View {
@@ -261,7 +242,6 @@ private struct PersonSuggestionRow: View {
                         .font(.system(size: 19, weight: .medium))
                         .foregroundStyle(.secondary)
                 }
-
             VStack(alignment: .leading, spacing: 3) {
                 Text(person.name)
                     .font(.subheadline.weight(.semibold))
@@ -271,9 +251,7 @@ private struct PersonSuggestionRow: View {
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
-
             Spacer(minLength: 4)
-
             Button(action: onSelect) {
                 Image(systemName: "arrow.up.left")
                     .font(.footnote.weight(.semibold))
