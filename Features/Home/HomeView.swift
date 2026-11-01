@@ -38,11 +38,26 @@ struct HomeView: View {
             }
             .sheet(isPresented: $isShowingNotifications) {
                 NavigationStack {
-                    ContentUnavailableView(
-                        "Şimdilik her şey sakin",
-                        systemImage: "heart.text.square",
-                        description: Text("Yeni beğeniler ve takip bildirimlerin burada görünecek.")
-                    )
+                    Group {
+                        if store.activities.isEmpty {
+                            ContentUnavailableView(
+                                "Şimdilik her şey sakin",
+                                systemImage: "heart.text.square",
+                                description: Text("Takip hareketlerin burada görünecek.")
+                            )
+                        } else {
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 14) {
+                                    ForEach(0..<store.activities.count, id: \.self) { index in
+                                        Label(store.activities[index], systemImage: "person.crop.circle.badge.checkmark")
+                                            .font(.subheadline)
+                                        Divider()
+                                    }
+                                }
+                                .padding(18)
+                            }
+                        }
+                    }
                     .navigationTitle("Bildirimler")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
