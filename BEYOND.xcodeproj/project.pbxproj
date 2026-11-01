@@ -21,10 +21,10 @@
 		A20000000000000000000008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCard.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreView.swift; sourceTree = "<group>"; };
 		A20000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		A30000000000000000000001 = {isa = PBXGroup; children = (A30000000000000000000002, A30000000000000000000003, A30000000000000000000004, A30000000000000000000009, A20000000000000000000005,); sourceTree = "<group>"; };
+		A30000000000000000000001 = {isa = PBXGroup; children = (A30000000000000000000002, A30000000000000000000003, A30000000000000000000004, A20000000000000000000005,); sourceTree = "<group>"; };
 		A30000000000000000000002 = {isa = PBXGroup; path = App; sourceTree = "<group>"; children = (A20000000000000000000001, A20000000000000000000002,); };
 		A30000000000000000000003 = {isa = PBXGroup; path = DesignSystem; sourceTree = "<group>"; children = (A20000000000000000000003,); };
-		A30000000000000000000004 = {isa = PBXGroup; path = Features; sourceTree = "<group>"; children = (A30000000000000000000006, A30000000000000000000007, A30000000000000000000008,); };
+		A30000000000000000000004 = {isa = PBXGroup; path = Features; sourceTree = "<group>"; children = (A30000000000000000000006, A30000000000000000000007, A30000000000000000000008, A30000000000000000000009,); };
 		A30000000000000000000006 = {isa = PBXGroup; path = Home; sourceTree = "<group>"; children = (A20000000000000000000004,); };
 		A30000000000000000000007 = {isa = PBXGroup; path = Feed; sourceTree = "<group>"; children = (A20000000000000000000007, A20000000000000000000008,); };
 		A30000000000000000000008 = {isa = PBXGroup; path = Explore; sourceTree = "<group>"; children = (A20000000000000000000009,); };
