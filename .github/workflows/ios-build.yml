@@ -16,7 +16,7 @@ jobs:
       - name: Build BEYOND Debug for iOS
         run: xcodebuild -project BEYOND.xcodeproj -scheme BEYOND -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO -derivedDataPath "$RUNNER_TEMP/BEYOND-DerivedData" build
       - name: Build BEYOND Release for iOS
-        run: xcodebuild -project BEYOND.xcodeproj -scheme BEYOND -sdk iphonesimulator -configuration Release CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project BEYOND.xcodeproj -scheme BEYOND -sdk iphonesimulator -configuration Release CODE_SIGNING_ALLOWED=NO -derivedDataPath "$RUNNER_TEMP/BEYOND-DerivedData" build
       - name: Package iOS Simulator app
         run: |
           APP_PATH="$RUNNER_TEMP/BEYOND-DerivedData/Build/Products/Release-iphonesimulator/BEYOND.app"
