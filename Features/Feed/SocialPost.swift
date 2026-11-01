@@ -1,16 +1,17 @@
 import Foundation
 
-struct SocialPost: Identifiable, Hashable {
+struct SocialPost: Identifiable, Hashable, Codable {
     let id: String
     let authorName: String
     let handle: String
     let location: String?
     let avatarSymbol: String
-    let imageURL: URL
+    let imageURL: URL?
     let caption: String
     let likeCount: Int
     let commentCount: Int
     let timeAgo: String
+    var imageData: Data? = nil
 
     static let samples: [SocialPost] = [
         SocialPost(
