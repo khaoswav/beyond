@@ -159,9 +159,7 @@ struct ExploreView: View {
             sectionHeading("Tanıyabileceğin kişiler", subtitle: "Yeni insanlarla bağlantı kur")
             VStack(spacing: 4) {
                 ForEach(ExplorePerson.samples) { person in
-                    PersonSuggestionRow(person: person) {
-                        searchText = person.handle.replacingOccurrences(of: "@", with: "")
-                    }
+                    PersonSuggestionRow(person: person)
                 }
             }
             .padding(.horizontal, 16)
@@ -191,9 +189,7 @@ struct ExploreView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Kişiler").font(.headline).padding(.horizontal, 16)
                     ForEach(matchingPeople) { person in
-                        PersonSuggestionRow(person: person) {
-                            searchText = person.handle.replacingOccurrences(of: "@", with: "")
-                        }
+                        PersonSuggestionRow(person: person)
                         .padding(.horizontal, 16)
                     }
                 }
@@ -229,7 +225,6 @@ struct ExploreView: View {
 private struct PersonSuggestionRow: View {
     @EnvironmentObject private var store: BeyondStore
     let person: ExplorePerson
-    let onSelect: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -262,15 +257,16 @@ private struct PersonSuggestionRow: View {
                     .background(store.isFollowing(person.handle) ? Color(uiColor: .secondarySystemBackground) : Color.accentColor, in: Capsule())
             }
             .buttonStyle(.plain)
-            Button(action: onSelect) {
-                Image(systemName: "arrow.up.left")
+            NavigationLink {
+                PublicProfileView(name: person.name, handle: person.handle, detail: person.detail, symbol: person.symbol)
+            } label: {
+                Image(systemName: "arrow.up.right")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .frame(width: 34, height: 34)
                     .background(Color(uiColor: .secondarySystemBackground), in: Circle())
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("\(person.name) ara")
+            .accessibilityLabel("Profili aç")
         }
         .padding(.vertical, 8)
     }
