@@ -19,23 +19,23 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeView()
-                .tabItem { Label("Ana Sayfa", systemImage: "house") }
+                .tabItem { Label("Ana Sayfa", image: "FAHouse") }
                 .tag(0)
 
             ExploreView()
-                .tabItem { Label("Keşfet", systemImage: "magnifyingglass") }
+                .tabItem { Label("Keşfet", image: "FAMagnifyingGlass") }
                 .tag(1)
 
             Color.clear
-                .tabItem { Label("Paylaş", systemImage: "plus.app") }
+                .tabItem { Label("Paylaş", image: "FAPlus") }
                 .tag(2)
 
             MessagesView()
-                .tabItem { Label("Mesajlar", systemImage: "paperplane") }
+                .tabItem { Label("Mesajlar", image: "FAPaperPlane") }
                 .tag(3)
 
             ProfileView()
-                .tabItem { Label("Profil", systemImage: "person.crop.circle") }
+                .tabItem { Label("Profil", image: "FAUser") }
                 .tag(4)
         }
         .onChange(of: selectedTab) { _, newValue in

@@ -46,7 +46,7 @@ struct HomeView: View {
                     Button {
                         isShowingNotifications = true
                     } label: {
-                        Image(systemName: "heart")
+                        Image("FABell").renderingMode(.template)
                             .font(.system(size: 20, weight: .regular))
                     }
                     .accessibilityLabel("Bildirimler")
@@ -181,7 +181,7 @@ struct HomeView: View {
                         .fill(Color.accentColor)
                         .frame(width: 21, height: 21)
                         .overlay {
-                            Image(systemName: "plus")
+                            Image("FAPlus").renderingMode(.template)
                                 .font(.system(size: 10, weight: .bold))
                                 .foregroundStyle(.white)
                         }

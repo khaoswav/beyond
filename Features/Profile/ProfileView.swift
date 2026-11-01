@@ -111,7 +111,7 @@ struct ProfileView: View {
             .buttonStyle(.plain)
 
             ShareLink(item: "BEYOND'da @\\(username) profilini keşfet.") {
-                Image(systemName: "square.and.arrow.up")
+                Image("FAPaperPlane").renderingMode(.template)
                     .font(.subheadline.weight(.semibold))
                     .frame(width: 44, height: 38)
                     .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 10))

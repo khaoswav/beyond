@@ -117,7 +117,7 @@ private struct ConversationView: View {
                     sentMessages.append(message)
                     draft = ""
                 } label: {
-                    Image(systemName: "arrow.up.circle.fill")
+                    Image("FAPaperPlane").renderingMode(.template)
                         .font(.system(size: 30))
                 }
                 .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
