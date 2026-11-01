@@ -5,6 +5,8 @@ struct HomeView: View {
     @State private var isShowingNotifications = false
     @State private var isShowingStoryComposer = false
     @State private var selectedStory: SocialStory?
+    @State private var selectedFeed = "forYou"
+    @AppStorage("beyond.profile.username") private var username = "khaos"
 
     var body: some View {
         NavigationStack {
@@ -13,12 +15,24 @@ struct HomeView: View {
                     storiesSection
                         .padding(.bottom, 18)
 
+                    feedSelector
+                        .padding(.bottom, 8)
+
                     Rectangle()
                         .fill(Color(uiColor: .separator).opacity(0.35))
                         .frame(height: 0.5)
 
-                    ForEach(store.posts) { post in
-                        PostCard(post: post)
+                    if visiblePosts.isEmpty {
+                        ContentUnavailableView(
+                            "Takip akışın boş",
+                            systemImage: "person.2",
+                            description: Text("Keşfet bölümünden kişileri takip ettiğinde paylaşımları burada göreceksin.")
+                        )
+                        .padding(.vertical, 28)
+                    } else {
+                        ForEach(visiblePosts) { post in
+                            PostCard(post: post)
+                        }
                     }
                 }
                 .padding(.top, 8)
@@ -79,6 +93,23 @@ struct HomeView: View {
                 StoryViewerView(story: story)
             }
         }
+    }
+
+    private var visiblePosts: [SocialPost] {
+        guard selectedFeed == "following" else { return store.posts }
+        return store.posts.filter {
+            store.followingHandles.contains($0.handle)
+                || $0.handle.caseInsensitiveCompare(username) == .orderedSame
+        }
+    }
+
+    private var feedSelector: some View {
+        Picker("Akış", selection: $selectedFeed) {
+            Text("Sana özel").tag("forYou")
+            Text("Takip").tag("following")
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, 16)
     }
 
     private var storiesSection: some View {
