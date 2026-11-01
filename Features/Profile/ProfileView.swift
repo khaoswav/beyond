@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import UIKit
 
 struct ProfileView: View {
     @AppStorage("beyond.profile.displayName") private var displayName = "Khaos"
