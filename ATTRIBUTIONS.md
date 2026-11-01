@@ -2,7 +2,7 @@
 
 BEYOND includes selected **Font Awesome Free 7.3.1** solid SVG icons by Fonticons, Inc.
 
-Icons included: house, magnifying-glass, plus, paper-plane, user, heart, comment, bookmark, and bell.
+Icons included: house, magnifying-glass, plus, paper-plane, user, heart (solid and regular), comment (solid and regular), bookmark (solid and regular), and bell.
 
 - Icon license: [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)
 - Source: [Font Awesome Free](https://fontawesome.com/)
