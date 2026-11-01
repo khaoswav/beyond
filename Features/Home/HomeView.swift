@@ -3,6 +3,8 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var store: BeyondStore
     @State private var isShowingNotifications = false
+    @State private var isShowingStoryComposer = false
+    @State private var selectedStory: SocialStory?
 
     var body: some View {
         NavigationStack {
@@ -69,6 +71,13 @@ struct HomeView: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
             }
+            .sheet(isPresented: $isShowingStoryComposer) {
+                StoryComposerView()
+                    .environmentObject(store)
+            }
+            .fullScreenCover(item: $selectedStory) { story in
+                StoryViewerView(story: story)
+            }
         }
     }
 
@@ -78,7 +87,7 @@ struct HomeView: View {
                 Text("Hikâyeler")
                     .font(.headline)
                 Spacer()
-                Text("Tümünü gör")
+                Text("Günün anlarını paylaş")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.secondary)
             }
@@ -86,12 +95,21 @@ struct HomeView: View {
 
             ScrollView(.horizontal) {
                 HStack(alignment: .top, spacing: 15) {
-                    storyItem(title: "Hikâyen", symbol: "plus", isAdd: true)
-                    storyItem(title: "Deniz", symbol: "sun.max.fill", tint: .orange)
-                    storyItem(title: "Mert", symbol: "mountain.2.fill", tint: .indigo)
-                    storyItem(title: "Ece", symbol: "camera.fill", tint: .pink)
-                    storyItem(title: "Ada", symbol: "leaf.fill", tint: .green)
-                    storyItem(title: "Can", symbol: "music.note", tint: .purple)
+                    Button {
+                        isShowingStoryComposer = true
+                    } label: {
+                        storyItem(title: "Hikâyen", symbol: "plus", isAdd: true)
+                    }
+                    .buttonStyle(.plain)
+
+                    ForEach(store.stories) { story in
+                        Button {
+                            selectedStory = story
+                        } label: {
+                            storyItem(title: story.authorName, symbol: story.symbol, tint: .orange)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
                 .padding(.horizontal, 16)
             }
