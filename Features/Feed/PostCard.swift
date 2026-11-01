@@ -57,11 +57,41 @@ struct PostCard: View {
         }
         .sheet(isPresented: $isShowingComments) {
             NavigationStack {
-                ContentUnavailableView(
-                    "Henüz yorum yok",
-                    systemImage: "bubble.left",
-                    description: Text("Bu gönderiye ilk yorumu sen yapabilirsin.")
-                )
+                VStack(spacing: 0) {
+                    if store.comments(for: post).isEmpty {
+                        ContentUnavailableView(
+                            "Henüz yorum yok",
+                            systemImage: "bubble.left",
+                            description: Text("Bu gönderiye ilk yorumu sen yapabilirsin.")
+                        )
+                    } else {
+                        List(Array(store.comments(for: post).enumerated()), id: \.offset) { _, comment in
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .font(.title2)
+                                    .foregroundStyle(.secondary)
+                                Text(comment)
+                                    .font(.subheadline)
+                                Spacer(minLength: 0)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .listStyle(.plain)
+                    }
+
+                    HStack(spacing: 10) {
+                        TextField("Yorum ekle...", text: $commentDraft, axis: .vertical)
+                            .textFieldStyle(.roundedBorder)
+                            .lineLimit(1...4)
+                        Button("Gönder") {
+                            store.addComment(commentDraft, to: post)
+                            commentDraft = ""
+                        }
+                        .fontWeight(.semibold)
+                        .disabled(commentDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    }
+                    .padding()
+                }
                 .navigationTitle("Yorumlar")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
