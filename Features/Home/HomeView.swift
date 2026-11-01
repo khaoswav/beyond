@@ -47,7 +47,9 @@ struct HomeView: View {
                         isShowingNotifications = true
                     } label: {
                         Image("FABell").renderingMode(.template)
-                            .font(.system(size: 20, weight: .regular))
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
                     }
                     .accessibilityLabel("Bildirimler")
                 }
@@ -182,7 +184,9 @@ struct HomeView: View {
                         .frame(width: 21, height: 21)
                         .overlay {
                             Image("FAPlus").renderingMode(.template)
-                                .font(.system(size: 10, weight: .bold))
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 9, height: 9)
                                 .foregroundStyle(.white)
                         }
                         .overlay {

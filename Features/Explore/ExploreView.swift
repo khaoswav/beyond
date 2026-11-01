@@ -93,6 +93,9 @@ struct ExploreView: View {
     private var searchField: some View {
         HStack(spacing: 10) {
             Image("FAMagnifyingGlass").renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 16, height: 16)
                 .foregroundStyle(.secondary)
             TextField("Kişi, gönderi veya konu ara", text: $searchText)
                 .font(.body)

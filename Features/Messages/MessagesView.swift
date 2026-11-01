@@ -118,7 +118,9 @@ private struct ConversationView: View {
                     draft = ""
                 } label: {
                     Image("FAPaperPlane").renderingMode(.template)
-                        .font(.system(size: 30))
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 22, height: 22)
                 }
                 .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 .accessibilityLabel("Mesaj gönder")
