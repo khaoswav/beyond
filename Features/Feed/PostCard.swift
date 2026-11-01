@@ -183,7 +183,7 @@ struct PostCard: View {
                     store.toggleLike(for: post)
                 }
             } label: {
-                Image("FAHeart").renderingMode(.template)
+                Image(isLiked ? "FAHeart" : "FAHeartRegular").renderingMode(.template)
                     .font(.system(size: 23, weight: .regular))
                     .foregroundStyle(isLiked ? .red : .primary)
                     .symbolEffect(.bounce, value: isLiked)
@@ -193,7 +193,7 @@ struct PostCard: View {
             Button {
                 isShowingComments = true
             } label: {
-                Image("FAComment").renderingMode(.template)
+                Image("FACommentRegular").renderingMode(.template)
                     .font(.system(size: 22))
             }
             .accessibilityLabel("Yorum yap")
@@ -211,7 +211,7 @@ struct PostCard: View {
                     store.toggleSaved(for: post)
                 }
             } label: {
-                Image("FABookmark").renderingMode(.template)
+                Image(isSaved ? "FABookmark" : "FABookmarkRegular").renderingMode(.template)
                     .font(.system(size: 22))
                     .symbolEffect(.bounce, value: isSaved)
             }
