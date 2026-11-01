@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct PostCard: View {
     let post: SocialPost
@@ -19,27 +20,7 @@ struct PostCard: View {
         VStack(alignment: .leading, spacing: 0) {
             header
 
-            AsyncImage(url: post.imageURL) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                case .failure:
-                    imageFallback
-                case .empty:
-                    ZStack {
-                        Color(uiColor: .secondarySystemBackground)
-                        ProgressView()
-                    }
-                @unknown default:
-                    imageFallback
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 340)
-            .clipped()
-            .accessibilityLabel("\(post.authorName) tarafından paylaşılan fotoğraf")
+            postImage
 
             actionBar
 
@@ -91,6 +72,38 @@ struct PostCard: View {
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
+        }
+    }
+
+    @ViewBuilder
+    private var postImage: some View {
+        if let data = post.imageData, let image = UIImage(data: data) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity)
+                .frame(maxHeight: 420)
+                .clipped()
+                .accessibilityLabel("Gönderi fotoğrafı")
+        } else if let url = post.imageURL {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                case .failure:
+                    imageFallback
+                case .empty:
+                    ZStack {
+                        Color(uiColor: .secondarySystemBackground)
+                        ProgressView()
+                    }
+                @unknown default:
+                    imageFallback
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 340)
+            .clipped()
         }
     }
 
