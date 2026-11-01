@@ -12,6 +12,16 @@ final class BeyondStore: ObservableObject {
     @Published private(set) var savedPostIDs: Set<String> {
         didSet { UserDefaults.standard.set(Array(savedPostIDs), forKey: Keys.saved) }
     }
+    @Published private(set) var followingHandles: Set<String> {
+        didSet { UserDefaults.standard.set(Array(followingHandles), forKey: Keys.following) }
+    }
+    @Published private(set) var activities: [String] {
+        didSet {
+            if let data = try? JSONEncoder().encode(activities) {
+                UserDefaults.standard.set(data, forKey: Keys.activities)
+            }
+        }
+    }
     @Published private(set) var comments: [String: [String]] {
         didSet {
             if let data = try? JSONEncoder().encode(comments) {
@@ -25,6 +35,8 @@ final class BeyondStore: ObservableObject {
         static let likes = "beyond.feed.likes.v1"
         static let saved = "beyond.feed.saved.v1"
         static let comments = "beyond.feed.comments.v1"
+        static let following = "beyond.social.following.v1"
+        static let activities = "beyond.social.activities.v1"
     }
 
     init() {
@@ -36,12 +48,38 @@ final class BeyondStore: ObservableObject {
         }
         likedPostIDs = Set(UserDefaults.standard.stringArray(forKey: Keys.likes) ?? [])
         savedPostIDs = Set(UserDefaults.standard.stringArray(forKey: Keys.saved) ?? [])
+        followingHandles = Set(UserDefaults.standard.stringArray(forKey: Keys.following) ?? [])
+        if let data = UserDefaults.standard.data(forKey: Keys.activities),
+           let stored = try? JSONDecoder().decode([String].self, from: data) {
+            activities = stored
+        } else {
+            activities = []
+        }
         if let data = UserDefaults.standard.data(forKey: Keys.comments),
            let stored = try? JSONDecoder().decode([String: [String]].self, from: data) {
             comments = stored
         } else {
             comments = [:]
         }
+    }
+
+    func isFollowing(_ handle: String) -> Bool {
+        followingHandles.contains(handle.trimmingCharacters(in: CharacterSet(charactersIn: "@")))
+    }
+
+    func toggleFollow(handle: String, displayName: String) {
+        let normalized = handle.trimmingCharacters(in: CharacterSet(charactersIn: "@"))
+        if followingHandles.contains(normalized) {
+            followingHandles.remove(normalized)
+            activities.insert("\(displayName) takibini bıraktın.", at: 0)
+        } else {
+            followingHandles.insert(normalized)
+            activities.insert("\(displayName) kişisini takip etmeye başladın.", at: 0)
+        }
+    }
+
+    func clearActivities() {
+        activities.removeAll()
     }
 
     func addPost(caption: String, imageData: Data?) {
