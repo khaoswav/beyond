@@ -156,13 +156,10 @@ struct ExploreView: View {
     private var peopleSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             sectionHeading("Tanıyabileceğin kişiler", subtitle: "Yeni insanlarla bağlantı kur")
-            VStack(spacing: 0) {
-                ForEach(Array(ExplorePerson.samples.enumerated()), id: \.element.id) { index, person in
+            VStack(spacing: 4) {
+                ForEach(ExplorePerson.samples) { person in
                     PersonSuggestionRow(person: person) {
                         searchText = person.handle.replacingOccurrences(of: "@", with: "")
-                    }
-                    if index < ExplorePerson.samples.count - 1 {
-                        Divider().padding(.leading, 62)
                     }
                 }
             }
