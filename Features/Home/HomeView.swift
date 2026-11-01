@@ -90,7 +90,7 @@ struct HomeView: View {
                     .environmentObject(store)
             }
             .fullScreenCover(item: $selectedStory) { story in
-                StoryViewerView(story: story)
+                StoryViewerView(story: story) { selectedStory = nil }
             }
         }
     }

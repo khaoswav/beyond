@@ -84,6 +84,7 @@ struct StoryComposerView: View {
 
 struct StoryViewerView: View {
     let story: SocialStory
+    let onClose: () -> Void
 
     var body: some View {
         ZStack {
@@ -124,6 +125,11 @@ struct StoryViewerView: View {
                         Image(systemName: "square.and.arrow.up")
                             .font(.headline)
                     }
+                    Button(action: onClose) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                    }
+                    .accessibilityLabel("Hikâyeyi kapat")
                 }
                 .foregroundStyle(.white)
                 .padding(18)
