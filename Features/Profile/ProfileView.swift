@@ -3,6 +3,7 @@ import PhotosUI
 import UIKit
 
 struct ProfileView: View {
+    @EnvironmentObject private var store: BeyondStore
     @AppStorage("beyond.profile.displayName") private var displayName = "Khaos"
     @AppStorage("beyond.profile.username") private var username = "khaos"
     @AppStorage("beyond.profile.bio") private var bio = "Kendi hikâyeni paylaş."
@@ -110,7 +111,8 @@ struct ProfileView: View {
     }
 
     private var postSection: some View {
-        VStack(spacing: 18) {
+        let userPosts = store.posts(for: username)
+        return VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Image(systemName: "square.grid.3x3")
                     .font(.subheadline.weight(.semibold))
@@ -120,26 +122,19 @@ struct ProfileView: View {
             }
             .padding(.horizontal, 18)
 
-            ContentUnavailableView(
-                "Henüz gönderi yok",
-                systemImage: "camera",
-                description: Text("Paylaştığın fotoğraf ve videolar burada görünecek.")
-            )
-            .padding(.vertical, 28)
+            if userPosts.isEmpty {
+                ContentUnavailableView(
+                    "Henüz gönderi yok",
+                    systemImage: "camera",
+                    description: Text("İlk paylaşımını yap, hikâyen burada başlasın.")
+                )
+                .padding(.vertical, 24)
+            } else {
+                ForEach(userPosts) { post in
+                    PostCard(post: post)
+                }
+            }
         }
-    }
-
-    private func optimizedImageData(from data: Data) -> Data? {
-        guard let image = UIImage(data: data) else { return nil }
-        let canvas = CGSize(width: 512, height: 512)
-        let scale = max(canvas.width / image.size.width, canvas.height / image.size.height)
-        let scaledSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
-        let origin = CGPoint(x: (canvas.width - scaledSize.width) / 2, y: (canvas.height - scaledSize.height) / 2)
-        let renderer = UIGraphicsImageRenderer(size: canvas)
-        let thumbnail = renderer.image { _ in
-            image.draw(in: CGRect(origin: origin, size: scaledSize))
-        }
-        return thumbnail.jpegData(compressionQuality: 0.78)
     }
 
     private func statistic(value: String, title: String) -> some View {
