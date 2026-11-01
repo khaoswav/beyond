@@ -13,10 +13,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Show Xcode version
         run: xcodebuild -version
-      - name: Build BEYOND Debug for iOS
+      - name: Build BEYOND Debug for iOS Simulator
         run: xcodebuild -project BEYOND.xcodeproj -scheme BEYOND -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO -derivedDataPath "$RUNNER_TEMP/BEYOND-DerivedData" build
-      - name: Build BEYOND Release for iOS
+      - name: Build BEYOND Release for iOS Simulator
         run: xcodebuild -project BEYOND.xcodeproj -scheme BEYOND -sdk iphonesimulator -configuration Release CODE_SIGNING_ALLOWED=NO -derivedDataPath "$RUNNER_TEMP/BEYOND-DerivedData" build
+      - name: Build BEYOND Debug for physical iOS devices
+        run: xcodebuild -project BEYOND.xcodeproj -scheme BEYOND -sdk iphoneos -configuration Debug CODE_SIGNING_ALLOWED=NO -derivedDataPath "$RUNNER_TEMP/BEYOND-Device-DerivedData" build
       - name: Package iOS Simulator app
         run: |
           APP_PATH="$RUNNER_TEMP/BEYOND-DerivedData/Build/Products/Release-iphonesimulator/BEYOND.app"
