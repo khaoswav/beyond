@@ -3,13 +3,16 @@ import SwiftUI
 struct PostCard: View {
     let post: SocialPost
 
-    @State private var isLiked = false
-    @State private var isSaved = false
+    @EnvironmentObject private var store: BeyondStore
+    
     @State private var isShowingComments = false
+    @State private var commentDraft = ""
+
+    private var isLiked: Bool { store.likedPostIDs.contains(post.id) }
+    private var isSaved: Bool { store.savedPostIDs.contains(post.id) }
 
     private var formattedLikes: String {
-        let count = post.likeCount + (isLiked ? 1 : 0)
-        return count.formatted(.number.locale(Locale(identifier: "tr_TR")))
+        (post.likeCount + (isLiked ? 1 : 0)).formatted(.number.locale(Locale(identifier: "tr_TR")))
     }
 
     var body: some View {
@@ -134,7 +137,7 @@ struct PostCard: View {
         HStack(spacing: 18) {
             Button {
                 withAnimation(.spring(response: 0.28, dampingFraction: 0.62)) {
-                    isLiked.toggle()
+                    store.toggleLike(for: post)
                 }
             } label: {
                 Image(systemName: isLiked ? "heart.fill" : "heart")
@@ -162,7 +165,7 @@ struct PostCard: View {
 
             Button {
                 withAnimation(.easeInOut(duration: 0.18)) {
-                    isSaved.toggle()
+                    store.toggleSaved(for: post)
                 }
             } label: {
                 Image(systemName: isSaved ? "bookmark.fill" : "bookmark")
